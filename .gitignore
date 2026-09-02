@@ -1,0 +1,12 @@
+.next/
+node_modules/
+dist/
+out/
+
+.env
+.env*.local
+
+*.tsbuildinfo
+.DS_Store
+
+schema.json

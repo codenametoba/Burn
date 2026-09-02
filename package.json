@@ -1,0 +1,47 @@
+{
+  "name": "burn-indianapolis-redesign",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "sanity:import": "sanity dataset import sanity/seed.ndjson production --replace",
+    "sanity:deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "@sanity/image-url": "latest",
+    "@sanity/vision": "5.31.2",
+    "framer-motion": "latest",
+    "lucide-react": "latest",
+    "next": "latest",
+    "next-sanity": "11.6.13",
+    "react": "latest",
+    "react-dom": "latest",
+    "resend": "latest",
+    "sanity": "5.31.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  },
+  "overrides": {
+    "@sanity/runtime-cli": {
+      "adm-zip": "0.6.0"
+    },
+    "@vercel/frameworks": {
+      "js-yaml": "5.4.1"
+    },
+    "@sanity/preview-url-secret": {
+      "@sanity/uuid": "3.0.3"
+    },
+    "typeid-js": {
+      "uuid": "11.1.1"
+    }
+  }
+}
