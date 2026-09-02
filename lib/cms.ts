@@ -3,6 +3,7 @@ import { articles, cigars, events, imageSet, menuCategories, venue, venueImages,
 import { sanityClient, urlFor } from "@/lib/sanity";
 
 const isSanityConfigured = Boolean(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID);
+const venueTimeZone = "America/Indiana/Indianapolis";
 
 type SanityImage = {
   asset?: unknown;
@@ -39,6 +40,32 @@ async function fetchCms<T>(query: string, params: Record<string, string> = {}): 
   } catch {
     return null;
   }
+}
+
+function getVenueDateParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: venueTimeZone,
+    weekday: "long",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  const value = (type: string) => parts.find((part) => part.type === type)?.value || "";
+
+  return {
+    weekday: value("weekday"),
+    isoDate: `${value("year")}-${value("month")}-${value("day")}`,
+    label: new Intl.DateTimeFormat("en-US", {
+      timeZone: venueTimeZone,
+      weekday: "long",
+      month: "long",
+      day: "numeric"
+    }).format(date)
+  };
+}
+
+function getVenueHoursForDay(weekday: string) {
+  return weekday === "Sunday" ? "4 PM - 12 AM" : "4 PM - 2 AM";
 }
 
 function normalizeMenuTitle(title: string) {
@@ -95,6 +122,7 @@ export async function getSiteSettings() {
 }
 
 export async function getHomepage() {
+  const venueDate = getVenueDateParts();
   const data = await fetchCms<{
     heroHeadline?: string;
     heroSubheadline?: string;
@@ -114,6 +142,28 @@ export async function getHomepage() {
     featuredCigar->{brand, name},
     featuredPairing->{title, drink}
   }`);
+  const todaySpecial = await fetchCms<{ title?: string; description?: string }>(
+    groq`*[_type == "special" && active != false && day == $day] | order(featured desc, title asc)[0]{
+      title,
+      description
+    }`,
+    { day: venueDate.weekday }
+  );
+  const todayEvent = await fetchCms<{ title?: string; category?: string; startTime?: string; endTime?: string }>(
+    groq`*[_type == "event" && active != false && date == $date] | order(featured desc, startTime asc)[0]{
+      title,
+      category,
+      startTime,
+      endTime
+    }`,
+    { date: venueDate.isoDate }
+  );
+  const featuredPairing = await fetchCms<{ title?: string; drink?: string }>(
+    groq`*[_type == "pairing" && featured == true] | order(_updatedAt desc)[0]{
+      title,
+      drink
+    }`
+  );
 
   return {
     heroHeadline: data?.heroHeadline || "Indianapolis\nAfter Dark.",
@@ -123,9 +173,11 @@ export async function getHomepage() {
       "A destination built around conversation, cocktails, cigars, music, private rooms, and the kind of service that lets the night unfold naturally.",
     heroImage: imageToUrl(data?.heroMedia, imageSet.hero),
     tonight: {
-      special: data?.featuredSpecial?.title || "Whiskey Wednesday",
-      featured: data?.featuredPairing?.title || "Old Fashioned + Rocky Patel Pairing",
-      event: data?.featuredEvent?.title || "Late lounge sound",
+      dateLabel: venueDate.label,
+      hours: getVenueHoursForDay(venueDate.weekday),
+      special: todaySpecial?.title || data?.featuredSpecial?.title || "Whiskey Wednesday",
+      featured: data?.featuredPairing?.title || featuredPairing?.title || "Old Fashioned + Rocky Patel Pairing",
+      event: todayEvent?.title || data?.featuredEvent?.title || "Late lounge sound",
       cigar: data?.featuredCigar ? `${data.featuredCigar.brand || ""} ${data.featuredCigar.name || ""}`.trim() : "Rocky Patel Emerald"
     }
   };

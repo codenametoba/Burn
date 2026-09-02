@@ -10,7 +10,6 @@ import { getEvents, getHomepage, getMenu, getSpecials } from "@/lib/cms";
 
 export default async function Home() {
   const [homepage, menuCategories, weeklySpecials, events] = await Promise.all([getHomepage(), getMenu(), getSpecials(), getEvents()]);
-  const today = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date());
   const previewMenuTitles = [["Signature Cocktails"], ["Whiskey & Bourbon"], ["Tequila"], ["Food / Small Plates", "Small Plates"]];
   const featuredMenuCategories = previewMenuTitles
     .map((titles) => menuCategories.find((category) => titles.some((title) => category.title.toLowerCase() === title.toLowerCase())))
@@ -51,9 +50,9 @@ export default async function Home() {
           <SectionIntro number="00" label="Tonight" title="Tonight at BURN" copy="Hours, pairings, entertainment, and the reason to make tonight linger a little longer." />
           <div className="grid border border-[#B48A52]/25 md:grid-cols-5">
             <div className="bg-[#100D0B] p-6 md:col-span-2">
-              <p className="font-display text-xl uppercase tracking-[0.2em] text-[#B48A52]">{today}</p>
+              <p className="font-display text-xl uppercase tracking-[0.2em] text-[#B48A52]">{homepage.tonight.dateLabel}</p>
               <h2 className="font-display mt-8 text-7xl uppercase leading-none">Open</h2>
-              <p className="mt-3 text-2xl text-[#EAE2D5]">4 PM - 2 AM</p>
+              <p className="mt-3 text-2xl text-[#EAE2D5]">{homepage.tonight.hours}</p>
             </div>
             <div className="grid gap-0 md:col-span-3 md:grid-cols-3">
               {[
