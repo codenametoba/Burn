@@ -12,7 +12,7 @@ export default async function MenuPage() {
   const menuCategories = await getMenu();
   return (
     <main>
-      <PageHero eyebrow="02 / Menu" title="Pour. Pair. Repeat." copy="A CMS-editable menu designed to feel like a cocktail list you want to keep reading." image={imageSet.whiskey} />
+      <PageHero eyebrow="02 / Menu" title="Pour. Pair. Repeat." copy="Cocktails, whiskey, tequila, small plates, and premium cigars for nights that keep unfolding." image={imageSet.whiskey} />
       <section className="bg-[#100D0B] px-6 py-20">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[18rem_1fr]">
           <aside className="top-28 h-fit border-l border-[#B48A52]/40 pl-5 lg:sticky">

@@ -16,7 +16,7 @@ export default function CareersPage() {
           {["Management Opportunities", "General Staff", "Bar Staff"].map((role) => (
             <article className="border border-[#B48A52]/20 bg-[#211713]/55 p-7" key={role}>
               <h2 className="font-display text-4xl uppercase leading-none">{role}</h2>
-              <p className="mt-5 text-[#A79E94]">Staff can activate, edit, or hide this opening from Sanity Studio.</p>
+              <p className="mt-5 text-[#A79E94]">Join a polished hospitality team built around service, pace, atmosphere, and memorable downtown nights.</p>
               <Link className="focus-ring mt-8 inline-flex border border-[#B48A52]/60 px-5 py-3 font-display text-lg uppercase tracking-[0.14em] hover:border-[#D8642A]" href="/contact">Apply</Link>
             </article>
           ))}

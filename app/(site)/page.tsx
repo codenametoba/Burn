@@ -11,6 +11,12 @@ import { getEvents, getHomepage, getMenu, getSpecials } from "@/lib/cms";
 export default async function Home() {
   const [homepage, menuCategories, weeklySpecials, events] = await Promise.all([getHomepage(), getMenu(), getSpecials(), getEvents()]);
   const today = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date());
+  const previewMenuTitles = [["Signature Cocktails"], ["Whiskey & Bourbon"], ["Tequila"], ["Food / Small Plates", "Small Plates"]];
+  const featuredMenuCategories = previewMenuTitles
+    .map((titles) => menuCategories.find((category) => titles.some((title) => category.title.toLowerCase() === title.toLowerCase())))
+    .filter((category): category is (typeof menuCategories)[number] => Boolean(category));
+  const menuPreview = featuredMenuCategories.length ? featuredMenuCategories : menuCategories.slice(0, 4);
+
   return (
     <main>
       <section className="relative min-h-screen overflow-hidden px-6 pt-32">
@@ -42,7 +48,7 @@ export default async function Home() {
 
       <section className="bg-[#211713] px-6 py-20">
         <div className="mx-auto max-w-7xl">
-          <SectionIntro number="00" label="Tonight" title="Tonight at BURN" copy="A living snapshot for hours, specials, pairings, entertainment, and reservations." />
+          <SectionIntro number="00" label="Tonight" title="Tonight at BURN" copy="Hours, pairings, entertainment, and the reason to make tonight linger a little longer." />
           <div className="grid border border-[#B48A52]/25 md:grid-cols-5">
             <div className="bg-[#100D0B] p-6 md:col-span-2">
               <p className="font-display text-xl uppercase tracking-[0.2em] text-[#B48A52]">{today}</p>
@@ -85,9 +91,9 @@ export default async function Home() {
 
       <section className="bg-[linear-gradient(180deg,#123B2E_0%,#211713_44%,#541E22_100%)] px-6 py-24">
         <div className="mx-auto max-w-7xl">
-          <SectionIntro number="02" label="Menu" title="Pour. Pair. Repeat." copy="An elegant preview of cocktails, whiskey, small plates, and cigars, with every item ready to be managed in Sanity." />
+          <SectionIntro number="02" label="Menu" title="Pour. Pair. Repeat." copy="A curated look at cocktails, whiskey, tequila, small plates, and the pours built for an evening at BURN." />
           <div className="grid gap-6 md:grid-cols-2">
-            {menuCategories.map((category) => (
+            {menuPreview.map((category) => (
               <div key={category.title} className="border-y border-[#B48A52]/25 py-6">
                 <h3 className="font-display text-4xl uppercase">{category.title}</h3>
                 <div className="mt-7 space-y-6">
@@ -157,11 +163,11 @@ export default async function Home() {
 
       <section className="bg-[#211713] px-6 py-24">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-3">
-          {["Private-room celebrations", "Curated Instagram-style imagery", "Selected editorial reviews"].map((title, index) => (
+          {["Private-room celebrations", "Seen inside BURN", "Word gets around"].map((title, index) => (
             <div key={title} className="border-l border-[#B48A52]/40 pl-6">
               <p className="font-display text-sm text-[#D8642A]">{String(index + 6).padStart(2, "0")}</p>
               <h2 className="font-display mt-5 text-4xl uppercase leading-none">{title}</h2>
-              <p className="mt-5 text-[#A79E94]">The final pages turn the venue into a complete evening: VIP, membership, gallery, visit details, journal, careers, and conversion paths.</p>
+              <p className="mt-5 text-[#A79E94]">From VIP nights and locker membership to gallery moments, visit details, and journal stories, every path leads back to the room.</p>
             </div>
           ))}
         </div>

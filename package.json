@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "sanity:import": "sanity dataset import sanity/seed.ndjson production --replace",
+    "sanity:import": "sanity dataset import sanity/seed.ndjson --dataset production --missing",
+    "sanity:import:replace": "sanity dataset import sanity/seed.ndjson --dataset production --replace",
     "sanity:deploy": "sanity deploy"
   },
   "dependencies": {

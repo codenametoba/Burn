@@ -94,7 +94,49 @@ export const menuCategories = [
     ]
   },
   {
-    title: "Small Plates",
+    title: "Scotch",
+    items: [
+      { name: "The Macallan 12", description: "Honey, dried fruit, sherry oak, soft spice", price: "$22" },
+      { name: "Lagavulin 16", description: "Peat smoke, sea salt, dried fruit, long finish", price: "$28", featured: true }
+    ]
+  },
+  {
+    title: "Cognac",
+    items: [
+      { name: "Hennessy VSOP", description: "Vanilla, toasted oak, warm spice", price: "$18" },
+      { name: "Remy Martin 1738", description: "Baked fruit, caramel, rounded oak", price: "$20" }
+    ]
+  },
+  {
+    title: "Tequila",
+    items: [
+      { name: "Clase Azul Reposado", description: "Cooked agave, vanilla, soft barrel spice", price: "$34", featured: true },
+      { name: "Don Julio 1942", description: "Caramelized agave, oak, warm vanilla", price: "$32" }
+    ]
+  },
+  {
+    title: "Wine",
+    items: [
+      { name: "Prosecco", description: "Bright bubbles, green apple, citrus", price: "$12" },
+      { name: "House Cabernet", description: "Black cherry, cocoa, smooth tannin", price: "$14" }
+    ]
+  },
+  {
+    title: "Beer",
+    items: [
+      { name: "Local IPA", description: "Rotating Indianapolis craft selection", price: "$8" },
+      { name: "Imported Lager", description: "Crisp, clean, easy with a cigar", price: "$7" }
+    ]
+  },
+  {
+    title: "Non-Alcoholic",
+    items: [
+      { name: "Zero-Proof Mule", description: "Ginger, lime, mint, soda, bitters-style spice", price: "$10" },
+      { name: "Espresso Tonic", description: "Cold espresso, tonic, orange peel", price: "$9" }
+    ]
+  },
+  {
+    title: "Food / Small Plates",
     items: [
       { name: "Charcuterie Board", description: "Cured meats, cheese, olives, crostini", price: "$24" },
       { name: "Burn Flatbread", description: "Roasted tomato, mozzarella, basil, chili oil", price: "$18" },

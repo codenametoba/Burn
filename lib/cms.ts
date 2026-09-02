@@ -9,6 +9,20 @@ type SanityImage = {
   alt?: string;
 };
 
+type MenuItem = {
+  name: string;
+  description: string;
+  price: string;
+  featured?: boolean;
+  new?: boolean;
+  available?: boolean;
+};
+
+type MenuCategory = {
+  title: string;
+  items: MenuItem[];
+};
+
 function imageToUrl(image?: SanityImage, fallback = imageSet.lounge) {
   if (!image?.asset) return fallback;
   try {
@@ -25,6 +39,30 @@ async function fetchCms<T>(query: string, params: Record<string, string> = {}): 
   } catch {
     return null;
   }
+}
+
+function normalizeMenuTitle(title: string) {
+  const normalized = title.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, " ").trim();
+  return normalized === "small plates" ? "food small plates" : normalized;
+}
+
+function mergeMenuWithFallback(cmsCategories: MenuCategory[] | null) {
+  if (!cmsCategories?.length) return menuCategories;
+
+  const categoriesWithItems = cmsCategories.filter((category) => category.items?.length);
+  const usedFallbackTitles = new Set<string>();
+  const merged = categoriesWithItems.map((category) => {
+    const fallback = menuCategories.find((item) => normalizeMenuTitle(item.title) === normalizeMenuTitle(category.title));
+    if (fallback) usedFallbackTitles.add(normalizeMenuTitle(fallback.title));
+
+    return {
+      ...category,
+      items: fallback ? [...category.items, ...fallback.items.filter((item) => !category.items.some((cmsItem) => cmsItem.name === item.name))] : category.items
+    };
+  });
+
+  const missingFallbackCategories: MenuCategory[] = menuCategories.filter((category) => !usedFallbackTitles.has(normalizeMenuTitle(category.title)));
+  return [...merged, ...missingFallbackCategories];
 }
 
 export async function getSiteSettings() {
@@ -106,7 +144,20 @@ export async function getMenu() {
     }
   }`);
 
-  return data?.length ? data.filter((category) => category.items?.length) : menuCategories;
+  const normalizedData = data?.map((category) => ({
+    title: category.title,
+    items:
+      category.items?.map((item) => ({
+        name: item.name,
+        description: item.description || "",
+        price: item.price || "",
+        featured: Boolean(item.featured),
+        new: Boolean(item.new),
+        available: item.available
+      })) || []
+  }));
+
+  return mergeMenuWithFallback(normalizedData || null);
 }
 
 export async function getSpecials() {
