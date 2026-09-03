@@ -18,7 +18,7 @@ export function ExperienceSelector() {
   const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end end"]
+    offset: ["start 70%", "end 30%"]
   });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -29,8 +29,8 @@ export function ExperienceSelector() {
   });
 
   return (
-    <section ref={sectionRef} className="relative h-[245vh] min-h-[62rem] bg-[#123B2E] motion-reduce:h-auto">
-      <div className="sticky top-0 min-h-screen overflow-hidden">
+    <section ref={sectionRef} className="relative min-h-[46rem] overflow-hidden bg-[#123B2E]">
+      <div className="relative min-h-[46rem] overflow-hidden">
         {panels.map((panel, index) => (
           <Image
             key={panel.title}
@@ -45,7 +45,7 @@ export function ExperienceSelector() {
         ))}
         <div className="absolute inset-0 bg-gradient-to-r from-[#100D0B] via-[#100D0B]/72 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#100D0B] to-transparent md:hidden" />
-        <div className="relative mx-auto grid min-h-screen max-w-7xl items-end gap-10 px-6 py-24 md:grid-cols-[0.8fr_1fr] md:py-20">
+        <div className="relative mx-auto grid min-h-[46rem] max-w-7xl items-end gap-10 px-6 py-24 md:grid-cols-[0.8fr_1fr] md:py-20">
           <div>
             <p className="font-display text-sm uppercase tracking-[0.35em] text-[#B48A52]">Interactive Experience</p>
             <h2 className="font-display mt-5 text-6xl font-semibold uppercase leading-[0.88] md:text-8xl">Choose the room.</h2>
