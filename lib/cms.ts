@@ -36,7 +36,7 @@ function imageToUrl(image?: SanityImage, fallback = imageSet.lounge) {
 async function fetchCms<T>(query: string, params: Record<string, string> = {}): Promise<T | null> {
   if (!isSanityConfigured) return null;
   try {
-    return await sanityClient.fetch<T>(query, params, { next: { revalidate: 15 } });
+    return await sanityClient.fetch<T>(query, params, { cache: "no-store" });
   } catch {
     return null;
   }
@@ -76,20 +76,36 @@ function normalizeMenuTitle(title: string) {
 function mergeMenuWithFallback(cmsCategories: MenuCategory[] | null) {
   if (!cmsCategories?.length) return menuCategories;
 
-  const categoriesWithItems = cmsCategories.filter((category) => category.items?.length);
+  const groupedCategories = new Map<string, MenuCategory>();
+  cmsCategories
+    .filter((category) => category.items?.length)
+    .forEach((category) => {
+      const key = normalizeMenuTitle(category.title);
+      const existing = groupedCategories.get(key);
+
+      if (!existing) {
+        groupedCategories.set(key, { ...category, items: [...category.items] });
+        return;
+      }
+
+      const existingItemNames = new Set(existing.items.map((item) => item.name.trim().toLowerCase()));
+      existing.items.push(...category.items.filter((item) => !existingItemNames.has(item.name.trim().toLowerCase())));
+    });
+
   const usedFallbackTitles = new Set<string>();
-  const merged = categoriesWithItems.map((category) => {
+  const merged = Array.from(groupedCategories.values()).map((category) => {
     const fallback = menuCategories.find((item) => normalizeMenuTitle(item.title) === normalizeMenuTitle(category.title));
     if (fallback) usedFallbackTitles.add(normalizeMenuTitle(fallback.title));
 
+    const cmsItemNames = new Set(category.items.map((item) => item.name.trim().toLowerCase()));
     return {
       ...category,
-      items: fallback ? [...category.items, ...fallback.items.filter((item) => !category.items.some((cmsItem) => cmsItem.name === item.name))] : category.items
+      items: fallback ? [...category.items, ...fallback.items.filter((item) => !cmsItemNames.has(item.name.trim().toLowerCase()))] : category.items
     };
   });
 
   const missingFallbackCategories: MenuCategory[] = menuCategories.filter((category) => !usedFallbackTitles.has(normalizeMenuTitle(category.title)));
-  return [...merged, ...missingFallbackCategories];
+  return merged.length ? [...merged, ...missingFallbackCategories] : menuCategories;
 }
 
 export async function getSiteSettings() {
