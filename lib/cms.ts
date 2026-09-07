@@ -36,7 +36,7 @@ function imageToUrl(image?: SanityImage, fallback = imageSet.lounge) {
 async function fetchCms<T>(query: string, params: Record<string, string> = {}): Promise<T | null> {
   if (!isSanityConfigured) return null;
   try {
-    return await sanityClient.fetch<T>(query, params, { next: { revalidate: 60 } });
+    return await sanityClient.fetch<T>(query, params, { next: { revalidate: 15 } });
   } catch {
     return null;
   }
